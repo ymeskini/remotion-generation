@@ -50,10 +50,10 @@ export const Visualizer: FC<{
         return (
           <div
             key={i}
-            className="w-2"
+            className="w-2 rounded-sm"
             style={{
               backgroundColor: waveColor,
-              height: `${500 * Math.sqrt(v)}%`,
+              height: `${400 * Math.sqrt(v)}%`,
             }}
           />
         );
