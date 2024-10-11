@@ -1,9 +1,19 @@
-import React, { useRef } from "react";
-import { AbsoluteFill, Audio, Sequence, Img } from "remotion";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  AbsoluteFill,
+  Audio,
+  Sequence,
+  Img,
+  continueRender,
+  delayRender,
+  useVideoConfig,
+} from "remotion";
 import { z } from "zod";
+import { PaginatedSubtitles } from "./Subtitles";
+
 import { Visualizer } from "./Visualizer";
 
-export const fps = 30;
+export const fps = 50;
 
 export const AudioGramSchema = z.object({
   durationInSeconds: z.number().positive(),
@@ -24,6 +34,9 @@ export const AudioGramSchema = z.object({
       },
     ),
   titleText: z.string(),
+  subtitlesFileName: z.string().refine((s) => s.endsWith(".srt"), {
+    message: "Subtitles file must be a .srt file",
+  }),
 });
 
 type AudiogramCompositionSchemaType = z.infer<typeof AudioGramSchema>;
@@ -32,9 +45,29 @@ export const AudiogramComposition: React.FC<AudiogramCompositionSchemaType> = ({
   audioFileName,
   coverImgFileName,
   audioOffsetInSeconds,
+  subtitlesFileName,
 }) => {
+  const { durationInFrames } = useVideoConfig();
   const ref = useRef<HTMLDivElement>(null);
   const audioOffsetInFrames = Math.round(audioOffsetInSeconds * fps);
+  const [subtitles, setSubtitles] = useState<string | null>(null);
+  const [handle] = useState(() => delayRender());
+
+  useEffect(() => {
+    fetch(subtitlesFileName)
+      .then((res) => res.text())
+      .then((text) => {
+        setSubtitles(text);
+        continueRender(handle);
+      })
+      .catch((err) => {
+        console.log("Error fetching subtitles", err);
+      });
+  }, [handle, subtitlesFileName]);
+
+  if (!subtitles) {
+    return null;
+  }
 
   return (
     <div ref={ref}>
@@ -52,11 +85,19 @@ export const AudiogramComposition: React.FC<AudiogramCompositionSchemaType> = ({
               <Visualizer
                 mirrorWave
                 audioSrc={audioFileName}
-                numberOfSamples={256}
-                freqRangeStartIndex={7}
+                numberOfSamples={512}
+                freqRangeStartIndex={68}
                 waveLinesToDisplay={100}
                 waveColor="#2CE07F"
               />
+              <div>
+                <PaginatedSubtitles
+                  subtitles={subtitles}
+                  startFrame={audioOffsetInFrames}
+                  endFrame={audioOffsetInFrames + durationInFrames}
+                  subtitlesTextColor="white"
+                />
+              </div>
             </div>
           </div>
         </Sequence>

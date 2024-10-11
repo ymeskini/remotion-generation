@@ -30,6 +30,7 @@ export const Visualizer: FC<{
     frame,
     audioData,
     numberOfSamples, // Use more samples to get a nicer visualisation
+    optimizeFor: "accuracy",
   });
 
   // Pick the low values because they look nicer than high values
