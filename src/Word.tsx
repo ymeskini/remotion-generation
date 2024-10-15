@@ -6,8 +6,7 @@ import { SubtitleItem } from "parse-srt";
 export const Word: React.FC<{
   item: SubtitleItem;
   frame: number;
-  transcriptionColor: string;
-}> = ({ item, frame, transcriptionColor }) => {
+}> = ({ item, frame }) => {
   const opacity = interpolate(frame, [item.start, item.start + 15], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -30,7 +29,7 @@ export const Word: React.FC<{
         display: "inline-block",
         opacity,
         translate: `0 ${translateY}em`,
-        color: transcriptionColor,
+        color: "white",
       }}
     >
       {item.text}

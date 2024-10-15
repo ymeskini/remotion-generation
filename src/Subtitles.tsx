@@ -1,13 +1,6 @@
 import parseSRT from "parse-srt";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  cancelRender,
-  continueRender,
-  delayRender,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { ensureFont } from "./ensure-font";
+import React, { useMemo } from "react";
+import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Word } from "./Word";
 
 const useCurrentSubtitle = (
@@ -35,33 +28,13 @@ const useCurrentSubtitle = (
 
 export const PaginatedSubtitles: React.FC<{
   subtitles: string;
-  startFrame: number;
   endFrame: number;
-  subtitlesTextColor: string;
-}> = ({
-  startFrame,
-  endFrame,
-  subtitles,
-  subtitlesTextColor: transcriptionColor,
-}) => {
+}> = ({ endFrame, subtitles }) => {
   const frame = useCurrentFrame();
-  const [fontHandle] = useState(() => delayRender());
-  const [fontLoaded, setFontLoaded] = useState(false);
   const currentSubtitles = useCurrentSubtitle(subtitles, {
-    windowStart: startFrame,
+    windowStart: 0,
     windowEnd: endFrame,
   });
-
-  useEffect(() => {
-    ensureFont()
-      .then(() => {
-        continueRender(fontHandle);
-        setFontLoaded(true);
-      })
-      .catch((err) => {
-        cancelRender(err);
-      });
-  }, [fontHandle, fontLoaded]);
 
   const currentSubtitle = currentSubtitles.find(
     (subtitle) => subtitle.start <= frame && subtitle.end >= frame,
@@ -75,12 +48,12 @@ export const PaginatedSubtitles: React.FC<{
         right: 0,
         left: 0,
         textAlign: "center",
-        color: transcriptionColor,
+        color: "white",
       }}
       dir="rtl"
       lang="ar"
     >
-      {fontLoaded && currentSubtitle && (
+      {currentSubtitle && (
         <span
           style={{
             fontSize: 48,
@@ -90,7 +63,6 @@ export const PaginatedSubtitles: React.FC<{
           <Word
             frame={frame}
             item={currentSubtitle.item}
-            transcriptionColor={transcriptionColor}
           />
         </span>
       )}
