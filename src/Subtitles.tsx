@@ -1,7 +1,6 @@
-import parseSRT from "parse-srt";
 import React, { useMemo } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { Word } from "./Word";
+import parseSRT from "parse-srt";
 
 const useCurrentSubtitle = (
   src: string,
@@ -35,46 +34,17 @@ export const PaginatedSubtitles: React.FC<{
     windowStart: 0,
     windowEnd: endFrame,
   });
-
   const currentSubtitle = currentSubtitles.find(
     (subtitle) => subtitle.start <= frame && subtitle.end >= frame,
   );
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        width: "100%",
-        right: 0,
-        left: 0,
-        textAlign: "center",
-        color: "white",
-      }}
-      dir="rtl"
-      lang="ar"
-    >
+    <div className="w-full text-center" dir="rtl" lang="ar">
       {currentSubtitle && (
-        <span
-          style={{
-            fontSize: 48,
-          }}
-          id={String(currentSubtitle.item.id)}
-        >
-          <Word
-            frame={frame}
-            item={currentSubtitle.item}
-          />
-        </span>
+        <div className="text-5xl break-words" id={String(currentSubtitle.item.id)}>
+          {currentSubtitle.item.text}
+        </div>
       )}
     </div>
   );
 };
-
-declare global {
-  interface Array<T> {
-    findLastIndex(
-      predicate: (value: T, index: number, obj: T[]) => unknown,
-      thisArg?: unknown,
-    ): number;
-  }
-}

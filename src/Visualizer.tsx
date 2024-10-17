@@ -1,20 +1,18 @@
-import { useAudioData, visualizeAudio } from "@remotion/media-utils";
 import { FC } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import { useAudioData, visualizeAudio } from "@remotion/media-utils";
 
 export const Visualizer: FC<{
   audioSrc: string;
   numberOfSamples: number;
   freqRangeStartIndex: number;
   waveLinesToDisplay: number;
-  waveColor: string;
   mirrorWave: boolean;
 }> = ({
   audioSrc,
   numberOfSamples,
   freqRangeStartIndex,
   waveLinesToDisplay,
-  waveColor,
   mirrorWave,
 }) => {
   const frame = useCurrentFrame();
@@ -46,14 +44,13 @@ export const Visualizer: FC<{
     : frequencyDataSubset;
 
   return (
-    <div className="flex w-full h-96 items-center justify-center gap-1 mt-1">
+    <div className="flex w-full h-80 items-center justify-center gap-1 mt-1">
       {frequenciesToDisplay.map((v, i) => {
         return (
           <div
             key={i}
-            className="w-2 rounded-sm"
+            className="w-2 rounded-sm bg-[#2CE07F]"
             style={{
-              backgroundColor: waveColor,
               height: `${400 * Math.sqrt(v)}%`,
             }}
           />
