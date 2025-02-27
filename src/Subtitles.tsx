@@ -41,8 +41,8 @@ export const PaginatedSubtitles: React.FC<{
   return (
     <div className="w-full text-center" dir="rtl" lang="ar">
       {currentSubtitle && (
-        <div className="text-5xl break-words" id={String(currentSubtitle.item.id)}>
-          {currentSubtitle.item.text}
+        <div className="text-5xl break-words leading-normal" id={String(currentSubtitle.item.id)}>
+          {currentSubtitle.item.text.replace("<br />", " ")}
         </div>
       )}
     </div>
